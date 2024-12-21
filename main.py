@@ -1,7 +1,7 @@
 from typing import Any
 import openpyxl
 from datetime import datetime, timedelta
-from front import app, reset
+from front import app, reset, sum_work_hours
 
 
 def calculate_working_hours_from_excel(filename, sheet_name):
@@ -57,7 +57,7 @@ if __name__ == "__main__":
     sheet_name = "Dec"
     total, spare = calculate_working_hours_from_excel(filename, sheet_name)
 
-    print(total)
-    reset(total)
+    print(sum_work_hours(spare))
+    reset(total, spare)
 
     app.run_server(debug=True, port=1234)
