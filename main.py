@@ -53,11 +53,11 @@ def calculate_total_time(time_list):
 
 
 if __name__ == "__main__":
-    filename = "hours.xlsx"
+    filename = "h.xlsx"
     sheet_name = "Dec"
     total, spare = calculate_working_hours_from_excel(filename, sheet_name)
 
     print(sum_work_hours(spare))
     reset(total, spare)
 
-    app.run_server(debug=True, port=1234)
+    app.run_server(debug=True, port=7457)

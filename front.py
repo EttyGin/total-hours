@@ -1,16 +1,13 @@
+import random
 import dash
-
-# import dash_core_components as dcc
 from dash import html, dcc
-
 import plotly.graph_objects as go
 
 
-app = dash.Dash(__name__)  # ), external_stylesheets=[dbc.themes.BOOTSTRAP])
+app = dash.Dash(__name__)
 
 
 def reset(total_dict: dict, spare_dict: dict) -> None:
-    # יצירת הגרף
     fig_total = reset_graph(total_dict, "Attendance Summary")
     fig_spare = reset_graph(spare_dict, "Overtime Summary")
 
@@ -60,13 +57,16 @@ def reset_graph(data, title: str):
     hours = get_hours_in_str(data)
 
     colors = ["#636EFA", "#EF553B", "#00CC96", "#AB63FA", "#FFA15A"]
+    
+    color_maps: dict = create_colors(data)
+
     fig = go.Figure(
         data=[
             go.Bar(
                 x=dates,
                 y=hours,
-                marker=dict(color=colors * len(dates)),  # חזרה על סדרת הצבעים
-                text=list(data.values()),  # הוספת טקסט בתוך העמודות
+                marker=dict(color=[color_maps[hour] for hour in data.values()]),
+                text=list(data.values()),
                 textposition="auto",
             )
         ]
@@ -76,15 +76,15 @@ def reset_graph(data, title: str):
     fig.update_layout(
         title={
             "text": title,
-            "x": 0.5,  # מיקום אופקי במרכז (0-1)
-            "y": 0.9,  # מיקום אנכי קרוב לחלק העליון (0-1)
-            "xanchor": "center",  # יישור אופקי למרכז
-            "yanchor": "top",  # יישור אנכי לחלק העליון
+            "x": 0.5,
+            "y": 0.9, 
+            "xanchor": "center", 
+            "yanchor": "top", 
             "font": {
-                "size": 24,  # גודל פונט
-                "weight": "bold",  # גודל פונט
-                "color": "#EF553B",  # צבע פונט
-                "family": "MV Boli",  # משפחת פונט
+                "size": 24, 
+                "weight": "bold", 
+                "color": "#EF553B",
+                "family": "MV Boli",
             },
         },
         yaxis_title="Hours",
@@ -95,6 +95,16 @@ def reset_graph(data, title: str):
     )
 
     return fig
+
+def create_colors(data) -> dict[str]: 
+    color_map = {}
+    uniq = set()
+    for val in data.values():
+        uniq.add(val)
+    
+    for val in uniq:
+        color_map[val] = random_color()
+    return color_map
 
 
 def sum_work_hours(data) -> str:
@@ -107,6 +117,15 @@ def sum_work_hours(data) -> str:
     remaining_minutes = total_minutes % 60
     return f"{total_hours}:{remaining_minutes}"
 
+
+def random_color()-> str:
+
+  r = random.randint(0, 255)
+  g = random.randint(0, 255)
+  b = random.randint(0, 255)
+
+  hex_color = f"#{r:02x}{g:02x}{b:02x}"
+  return hex_color
 
 def get_hours_in_str(total_dict):
     hours = []
